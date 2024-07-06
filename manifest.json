@@ -4,9 +4,22 @@
   "description": "Locate a searchbar",
   "version": "1.0",
   "permissions": [
-    "contextMenus"
+    "contextMenus",
+    "activeTab",
+    "scripting"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "commands": {
+    "search-gg": {
+      "suggested_key": {
+        "default": "Alt+G",
+        "mac": "Alt+G",
+        "chromeos": "Alt+G"
+      },
+      "description": "Search the selected text on Google"
+    }
   }
 }
