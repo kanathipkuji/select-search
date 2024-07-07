@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Autosearch",
-  "description": "Locate a searchbar",
+  "name": "Search Shortcut",
+  "description": "Easily search selected text on any site.",
   "version": "1.0",
   "permissions": [
     "contextMenus",

@@ -1,32 +1,22 @@
 import { search } from './content.js';
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
-    id: "search-gg",
-    title: "Search on Google",
-    contexts: ["selection"]
+function reloadContextMenus() {
+  chrome.contextMenus.removeAll(() => {
+    chrome.storage.sync.get('todoItems', (data) => {
+      const items = data.todoItems || [];
+      createContextMenus(items);
+    });
   });
+}
 
-  // chrome.storage.sync.get(['googleSearchShortcut', 'youtubeSearchShortcut'], (result) => {
-  //   if (!result.googleSearchShortcut) {
-  //     chrome.storage.sync.set({ googleSearchShortcut: "Alt+G" });
-  //   }
-  //   if (!result.youtubeSearchShortcut) {
-  //     chrome.storage.sync.set({ youtubeSearchShortcut: "Alt+Y" });
-  //   }
-  // });
+chrome.runtime.onInstalled.addListener(() => {
+  reloadContextMenus();
+});
+
+chrome.runtime.onStartup.addListener(() => {
+  reloadContextMenus();
 });
   
-chrome.contextMenus.onClicked.addListener((item, tab) => {
-  if (item.menuItemId === "search-gg") {
-    chrome.scripting
-    .executeScript({
-      target : {tabId : tab.id},
-      func : search,
-      args : [ tab ],
-    })
-  }
-});
 
 chrome.commands.onCommand.addListener((command, tab) => {
   if (command === "search-gg" || command === "search-yt") {
@@ -39,22 +29,22 @@ chrome.commands.onCommand.addListener((command, tab) => {
   }
 });
 
-chrome.storage.onChanged.addListener((changes, namespace) => {
-  if (namespace === 'sync') {
-    if (changes.googleSearchShortcut) {
-      chrome.commands.update({
-        name: 'search-gg',
-        shortcut: changes.googleSearchShortcut.newValue
-      });
-    }
-    if (changes.youtubeSearchShortcut) {
-      chrome.commands.update({
-        name: 'search-yt',
-        shortcut: changes.youtubeSearchShortcut.newValue
-      });
-    }
-  }
-});
+// chrome.storage.onChanged.addListener((changes, namespace) => {
+//   if (namespace === 'sync') {
+//     if (changes.googleSearchShortcut) {
+//       chrome.commands.update({
+//         name: 'search-gg',
+//         shortcut: changes.googleSearchShortcut.newValue
+//       });
+//     }
+//     if (changes.youtubeSearchShortcut) {
+//       chrome.commands.update({
+//         name: 'search-yt',
+//         shortcut: changes.youtubeSearchShortcut.newValue
+//       });
+//     }
+//   }
+// });
 
 // chrome.storage.onChanged.addListener(({ enabledTlds }) => {
 //   if (typeof enabledTlds === 'undefined') return;
@@ -82,6 +72,32 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 //   }
 // });
 
+function createContextMenus(items) {
+  items.forEach((item) => {
+    chrome.contextMenus.create({
+      id: item.label,
+      title: item.label,
+      contexts: ['selection'],
+    });
+  });
+}
+
 chrome.storage.onChanged.addListener((changes, namespace) => {
-  console.log('Storage change detected:', changes);
+  if (changes.todoItems && namespace === 'sync') {
+    console.log("Changes todoitem" + changes.todoItems);
+    chrome.contextMenus.removeAll(() => {
+      console.log('New Value ' + changes.todoItems.newValue);
+      const items = changes.todoItems.newValue || [];
+      console.log('about to create context menus with ' + items);
+      createContextMenus(items);
+    });
+  }
+});
+
+chrome.contextMenus.onClicked.addListener((item, tab) => {
+  chrome.scripting.executeScript({
+    target : {tabId : tab.id},
+    func : search,
+    args : [ item.menuItemId, item.selectionText ],
+  });
 });

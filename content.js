@@ -1,3 +1,4 @@
-export function search(tab) {
-    console.log(getSelection().toString());
+export function search(id, text) {
+    console.log(id + ' ' + text)
+    // console.log(getSelection().toString());
 }
