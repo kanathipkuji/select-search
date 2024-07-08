@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Search Shortcut",
-  "description": "Easily search selected text on any site.",
+  "name": "Query Shortcut",
+  "description": "Easily query selected text on any URLs.",
   "version": "1.0",
   "permissions": [
     "contextMenus",
@@ -14,13 +14,14 @@
     "type": "module"
   },
   "commands": {
-    "search-gg": {
-      "suggested_key": {
-        "default": "Alt+G",
-        "mac": "Alt+G",
-        "chromeos": "Alt+G"
-      },
-      "description": "Search the selected text on Google"
+    "search-web-1": {
+      "description": "Query the selected text on Google"
+    },
+    "search-web-2": {
+      "description": "Query the selected text on Google"
+    },
+    "search-web-3": {
+      "description": "Query the selected text on Google"
     }
   },
   "options_page": "options.html",

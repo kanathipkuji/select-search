@@ -95,7 +95,7 @@ function saveConfigurations() {
     return;
   }
 
-  chrome.storage.sync.set({ todoItems: items }, () => {
+  chrome.storage.sync.set({ storedItems: items }, () => {
     console.log('Saved config:', items);
     const validText = document.getElementById('validation-message');
     validText.textContent = 'Configurations saved successfully.';
@@ -109,8 +109,8 @@ function saveConfigurations() {
 }
 
 async function loadConfigurations() {
-  const data = await chrome.storage.sync.get('todoItems');
-  const savedItems = data.todoItems || [];
+  const data = await chrome.storage.sync.get('storedItems');
+  const savedItems = data.storedItems || [];
   
   console.log('Loaded config:', savedItems);
 

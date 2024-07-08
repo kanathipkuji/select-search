@@ -1,9 +1,7 @@
-import { search } from './content.js';
-
 function reloadContextMenus() {
   chrome.contextMenus.removeAll(() => {
-    chrome.storage.sync.get('todoItems', (data) => {
-      const items = data.todoItems || [];
+    chrome.storage.sync.get('storedItems', (data) => {
+      const items = data.storedItems || [];
       createContextMenus(items);
     });
   });
@@ -75,7 +73,7 @@ chrome.commands.onCommand.addListener((command, tab) => {
 function createContextMenus(items) {
   items.forEach((item) => {
     chrome.contextMenus.create({
-      id: item.label,
+      id: `${item.id}`,
       title: item.label,
       contexts: ['selection'],
     });
@@ -83,11 +81,11 @@ function createContextMenus(items) {
 }
 
 chrome.storage.onChanged.addListener((changes, namespace) => {
-  if (changes.todoItems && namespace === 'sync') {
-    console.log("Changes todoitem" + changes.todoItems);
+  if (changes.storedItems && namespace === 'sync') {
+    console.log("Changes todoitem" + changes.storedItems);
     chrome.contextMenus.removeAll(() => {
-      console.log('New Value ' + changes.todoItems.newValue);
-      const items = changes.todoItems.newValue || [];
+      console.log('New Value ' + changes.storedItems.newValue);
+      const items = changes.storedItems.newValue || [];
       console.log('about to create context menus with ' + items);
       createContextMenus(items);
     });
@@ -95,9 +93,28 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 });
 
 chrome.contextMenus.onClicked.addListener((item, tab) => {
-  chrome.scripting.executeScript({
-    target : {tabId : tab.id},
-    func : search,
-    args : [ item.menuItemId, item.selectionText ],
-  });
+  search(item.menuItemId, item.selectionText, tab);
 });
+
+export async function search(id, text, tab) {
+  console.log('ID: ' + id + ' Text: ' + text);
+  id = parseInt(id);
+  const data = await chrome.storage.sync.get('storedItems');
+  const items = data.storedItems || [];
+
+  const item = items.find(item => item.id === id);
+  console.log('Matching Item: ' + item);
+  if (!item) {
+      console.log('No matching saved configurations found');
+      return;
+  }
+  console.log('going to the url');
+
+  const urlString = `${item.url}${encodeURIComponent(text)}`
+  console.log('URL string: ' + urlString);
+  const url = new URL(urlString);
+
+  console.log('URL: ' + url);
+  // url.searchParams.set('q', item.selectionText);
+  chrome.tabs.create({ url: url.href, index: tab.index + 1 });
+}
