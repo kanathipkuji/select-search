@@ -6,22 +6,28 @@
   "permissions": [
     "contextMenus",
     "activeTab",
-    "scripting",
-    "storage"
+    "storage",
+    "scripting"
   ],
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
   "commands": {
-    "search-web-1": {
-      "description": "Query the selected text on Google"
+    "search-url-1": {
+      "description": "Query the selected text on URL #1"
     },
-    "search-web-2": {
-      "description": "Query the selected text on Google"
+    "search-url-2": {
+      "description": "Query the selected text on URL #2"
     },
-    "search-web-3": {
-      "description": "Query the selected text on Google"
+    "search-url-3": {
+      "description": "Query the selected text on URL #3"
+    },
+    "search-url-4": {
+      "description": "Query the selected text on URL #4"
+    },
+    "search-url-5": {
+      "description": "Query the selected text on URL #5"
     }
   },
   "options_page": "options.html",

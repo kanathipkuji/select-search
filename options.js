@@ -46,17 +46,6 @@ function addListItem(id, label, url) {
   tbody.appendChild(tr);
 }
 
-// function validateShortcut(shortcut) {
-//     const validModifiers = ['Ctrl', 'Alt', 'Shift', 'Command'];
-//     const parts = shortcut.split('+');
-//     if (parts.length < 2) return false;
-//     for (let i = 0; i < parts.length - 1; i++) {
-//         if (!validModifiers.includes(parts[i])) return false;
-//     }
-//     const key = parts[parts.length - 1];
-//     return key.length === 1 && /^[a-zA-Z0-9]$/.test(key);
-// }
-
 function isValidHttpUrl(str) {
   const pattern = new RegExp(
     '^(https?:\\/\\/)?' + // protocol

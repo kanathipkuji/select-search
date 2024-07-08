@@ -15,60 +15,22 @@ chrome.runtime.onStartup.addListener(() => {
   reloadContextMenus();
 });
   
+function _getSelection() { return getSelection().toString(); }
 
 chrome.commands.onCommand.addListener((command, tab) => {
-  if (command === "search-gg" || command === "search-yt") {
-    chrome.scripting
-    .executeScript({
-      target : {tabId : tab.id},
-      func : search,
-      args : [ tab, command ],
-    })
+  if (command === "search-url-1" || command === "search-url-2" || command === "search-url-3" || command === "search-url-4" || command === "search-url-5") {
+    chrome.scripting.executeScript({
+      target: {tabId: tab.id},
+      func: _getSelection,
+    }).then(injectionResults => {
+      if (!injectionResults) return;
+      const selection = injectionResults[0].result;
+      if (!selection) return;
+      // console.log(selection);
+      search(command.at(-1), selection, tab);
+    });
   }
 });
-
-// chrome.storage.onChanged.addListener((changes, namespace) => {
-//   if (namespace === 'sync') {
-//     if (changes.googleSearchShortcut) {
-//       chrome.commands.update({
-//         name: 'search-gg',
-//         shortcut: changes.googleSearchShortcut.newValue
-//       });
-//     }
-//     if (changes.youtubeSearchShortcut) {
-//       chrome.commands.update({
-//         name: 'search-yt',
-//         shortcut: changes.youtubeSearchShortcut.newValue
-//       });
-//     }
-//   }
-// });
-
-// chrome.storage.onChanged.addListener(({ enabledTlds }) => {
-//   if (typeof enabledTlds === 'undefined') return;
-
-//   const allTlds = Object.keys(tldLocales);
-//   const currentTlds = new Set(enabledTlds.newValue);
-//   const oldTlds = new Set(enabledTlds.oldValue ?? allTlds);
-//   const changes = allTlds.map((tld) => ({
-//     tld,
-//     added: currentTlds.has(tld) && !oldTlds.has(tld),
-//     removed: !currentTlds.has(tld) && oldTlds.has(tld)
-//   }));
-
-//   for (const { tld, added, removed } of changes) {
-//     if (added) {
-//       chrome.contextMenus.create({
-//         id: tld,
-//         title: tldLocales[tld],
-//         type: 'normal',
-//         contexts: ['selection']
-//       });
-//     } else if (removed) {
-//       chrome.contextMenus.remove(tld);
-//     }
-//   }
-// });
 
 function createContextMenus(items) {
   items.forEach((item) => {
@@ -82,11 +44,11 @@ function createContextMenus(items) {
 
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (changes.storedItems && namespace === 'sync') {
-    console.log("Changes todoitem" + changes.storedItems);
+    // console.log("Changes todoitem" + changes.storedItems);
     chrome.contextMenus.removeAll(() => {
-      console.log('New Value ' + changes.storedItems.newValue);
+      // console.log('New Value ' + changes.storedItems.newValue);
       const items = changes.storedItems.newValue || [];
-      console.log('about to create context menus with ' + items);
+      // console.log('about to create context menus with ' + items);
       createContextMenus(items);
     });
   }
@@ -96,25 +58,30 @@ chrome.contextMenus.onClicked.addListener((item, tab) => {
   search(item.menuItemId, item.selectionText, tab);
 });
 
-export async function search(id, text, tab) {
-  console.log('ID: ' + id + ' Text: ' + text);
+async function search(id, text, tab) {
+  // console.log('ID: ' + id + ' Text: ' + text + ' Tab: ' + tab.index);
   id = parseInt(id);
   const data = await chrome.storage.sync.get('storedItems');
   const items = data.storedItems || [];
 
   const item = items.find(item => item.id === id);
-  console.log('Matching Item: ' + item);
+  // console.log('Matching Item: ' + item);
   if (!item) {
-      console.log('No matching saved configurations found');
+      console.log('No matching saved configurations found.');
       return;
   }
-  console.log('going to the url');
 
   const urlString = `${item.url}${encodeURIComponent(text)}`
-  console.log('URL string: ' + urlString);
   const url = new URL(urlString);
 
-  console.log('URL: ' + url);
+  // console.log('URL: ' + url);
   // url.searchParams.set('q', item.selectionText);
   chrome.tabs.create({ url: url.href, index: tab.index + 1 });
+}
+
+async function getCurrentTab() {
+  let queryOptions = { active: true, lastFocusedWindow: true };
+  // `tab` will either be a `tabs.Tab` instance or `undefined`.
+  let [tab] = await chrome.tabs.query(queryOptions);
+  return tab;
 }
