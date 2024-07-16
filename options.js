@@ -9,7 +9,7 @@ function addItem() {
   updateAddButtonState();
 }
 
-function addListItem(id, label, url) {
+function addListItem(id, label, url, command) {
   const tbody = document.getElementById('items-list');
   const tr = document.createElement('tr');
 
@@ -31,6 +31,16 @@ function addListItem(id, label, url) {
   urlTd.appendChild(urlInput);
   tr.appendChild(urlTd);
 
+  const shortcutKeyTd = document.createElement('td');
+  if (command) {
+    const shortcutKeySpan = document.createElement('span');
+    shortcutKeySpan.textContent = command.shortcut;
+    shortcutKeySpan.className = 'delete-button';
+    shortcutKeyTd.appendChild(shortcutKeySpan);
+  }
+  tr.appendChild(shortcutKeyTd);
+
+
   const actionTd = document.createElement('td');
   const deleteButton = document.createElement('button');
   deleteButton.textContent = 'Delete';
@@ -42,6 +52,7 @@ function addListItem(id, label, url) {
   });
   actionTd.appendChild(deleteButton);
   tr.appendChild(actionTd);
+
 
   tbody.appendChild(tr);
 }
@@ -103,8 +114,10 @@ async function loadConfigurations() {
   
   console.log('Loaded config:', savedItems);
 
-  savedItems.forEach(({ id, label, url }) => {
-    addListItem(id, label, url);
+  commands = await chrome.commands.getAll()
+
+  savedItems.forEach(({ id, label, url }, i) => {
+    addListItem(id, label, url, commands[i] || null);
   });
 
   itemIdCounter = savedItems.length + 1;
