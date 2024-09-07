@@ -14,23 +14,6 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.runtime.onStartup.addListener(() => {
   reloadContextMenus();
 });
-  
-function _getSelection() { return getSelection().toString(); }
-
-chrome.commands.onCommand.addListener((command, tab) => {
-  if (command === "search-url-1" || command === "search-url-2" || command === "search-url-3" || command === "search-url-4" || command === "search-url-5") {
-    chrome.scripting.executeScript({
-      target: {tabId: tab.id},
-      func: _getSelection,
-    }).then(injectionResults => {
-      if (!injectionResults) return;
-      const selection = injectionResults[0].result;
-      if (!selection) return;
-      // console.log(selection);
-      search(command.at(-1), selection, tab);
-    });
-  }
-});
 
 function createContextMenus(items) {
   items.forEach((item) => {
@@ -53,6 +36,25 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     });
   }
 });
+
+  
+function _getSelection() { return getSelection().toString(); }
+
+chrome.commands.onCommand.addListener((command, tab) => {
+  if (command === "search-url-1" || command === "search-url-2" || command === "search-url-3" || command === "search-url-4" || command === "search-url-5") {
+    chrome.scripting.executeScript({
+      target: {tabId: tab.id},
+      func: _getSelection,
+    }).then(injectionResults => {
+      if (!injectionResults) return;
+      const selection = injectionResults[0].result;
+      if (!selection) return;
+      // console.log(selection);
+      search(command.at(-1), selection, tab);
+    });
+  }
+});
+
 
 chrome.contextMenus.onClicked.addListener((item, tab) => {
   search(item.menuItemId, item.selectionText, tab);
@@ -79,9 +81,9 @@ async function search(id, text, tab) {
   chrome.tabs.create({ url: url.href, index: tab.index + 1 });
 }
 
-async function getCurrentTab() {
-  let queryOptions = { active: true, lastFocusedWindow: true };
-  // `tab` will either be a `tabs.Tab` instance or `undefined`.
-  let [tab] = await chrome.tabs.query(queryOptions);
-  return tab;
-}
+// async function getCurrentTab() {
+//   let queryOptions = { active: true, lastFocusedWindow: true };
+//   // `tab` will either be a `tabs.Tab` instance or `undefined`.
+//   let [tab] = await chrome.tabs.query(queryOptions);
+//   return tab;
+// }
