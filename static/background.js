@@ -1,7 +1,7 @@
 function reloadContextMenus() {
   chrome.contextMenus.removeAll(() => {
-    chrome.storage.sync.get('storedItems', (data) => {
-      const items = data.storedItems || [];
+    chrome.storage.sync.get('items', (store) => {
+      const items = store.items || [];
       createContextMenus(items);
     });
   });
@@ -27,7 +27,7 @@ chrome.commands.onCommand.addListener((command, tab) => {
       const selection = injectionResults[0].result;
       if (!selection) return;
       // console.log(selection);
-      search(command.at(-1), selection, tab);
+      search(command.at(-1) - 1, selection, tab, true);
     });
   }
 });
@@ -43,11 +43,11 @@ function createContextMenus(items) {
 }
 
 chrome.storage.onChanged.addListener((changes, namespace) => {
-  if (changes.storedItems && namespace === 'sync') {
-    // console.log("Changes todoitem" + changes.storedItems);
+  if (changes.items && namespace === 'sync') {
+    // console.log("Changes todoitem" + changes.items);
     chrome.contextMenus.removeAll(() => {
-      // console.log('New Value ' + changes.storedItems.newValue);
-      const items = changes.storedItems.newValue || [];
+      // console.log('New Value ' + changes.items.newValue);
+      const items = changes.items.newValue || [];
       // console.log('about to create context menus with ' + items);
       createContextMenus(items);
     });
@@ -55,16 +55,24 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 });
 
 chrome.contextMenus.onClicked.addListener((item, tab) => {
-  search(item.menuItemId, item.selectionText, tab);
+  console.log(item.menuItemId);
+  search(item.menuItemId, item.selectionText, tab, false);
 });
 
-async function search(id, text, tab) {
-  // console.log('ID: ' + id + ' Text: ' + text + ' Tab: ' + tab.index);
-  id = parseInt(id);
-  const data = await chrome.storage.sync.get('storedItems');
-  const items = data.storedItems || [];
+async function search(id, text, tab, byIndex) {
+  console.log('ID: ' + id + ' Text: ' + text + ' Tab: ' + tab.index);
+  // id = parseInt(id);
+  console.log(id);
+  const store = await chrome.storage.sync.get('items');
+  console.log(store);
+  const items = store.items || [];
+  let item = null;
 
-  const item = items.find(item => item.id === id);
+  if (byIndex) {
+    item = items.at(id);
+  } else {
+    item = items.find(item => item.id === id);
+  }
   // console.log('Matching Item: ' + item);
   if (!item) {
       console.log('No matching saved configurations found.');
