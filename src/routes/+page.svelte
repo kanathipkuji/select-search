@@ -1,7 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import { fly, slide } from 'svelte/transition';
-	import { enhance } from '$app/forms';
+    import VerticalList from './VerticalList.svelte';
 
     let items = [];
     let commands = [];
@@ -44,56 +43,24 @@
         closeForm();
     }
 
-    function deleteItem(id) {
-        deleting = [...deleting, id];
-        items = items.filter(item => item.id !== id);
-        chrome.storage.sync.set({ items });
-        deleting = deleting.filter(deletedId => deletedId !== id);
-    }
-
 
 </script>
 <div class="body">
-    <h2>Shortcuts Configuration</h2>
-    <table id="shortcuts-table">
+    <h1>Select Search</h1>
+    <!-- <h2>Shortcuts Configuration</h2> -->
+    <table id="shortcuts">
         <thead>
             <tr>
-                <th>#</th>
+                <th>Shortcut Key</th>
                 <th>Label</th>
                 <th>URL</th>
-                <th>Shortcut Key</th>
-                <th></th>
+                <th class='action'></th>
+                <th class='action'></th>
             </tr>
         </thead>
-        <tbody id="items-list">
-            <!-- List items will be added here dynamically -->
-            {#each items.filter((item) => !deleting.includes(item.id)) as item, i (item.id)}
-			<tr in:fly={{ y: 20 }} out:slide>
-                <td>
-                    {i + 1}
-                </td>
-                <td>
-                    <span>{item.label}</span>
-                </td>
-                <td>
-                    <span>{item.url}</span>
-                </td>
-                <td>
-                    {#if i < commands.length}
-                        <span>
-                            {commands[i].shortcut}                            
-                        </span>
-                    {/if}
-                </td>
-                <td>
-                    <button on:click={() => deleteItem(item.id)} class="delete-button"></button>
-                </td>
-				
-			</tr>
-		{/each}
-        </tbody>
+        <VerticalList items={items.filter((item) => !deleting.includes(item.id))} {commands}/>
     </table>
-    <div id="validation-message"></div> <!-- Placeholder for validation message -->
+    <div id="validation-message"></div>
     <button on:click={openForm} id="add-button">Add Item</button>
     {#if showForm}
         <div class="popup-form">
@@ -104,7 +71,6 @@
                 <label for="url">URL:</label>
                 <input type="url" id="url" bind:value={newItem.url} />
 
-                <!-- Validation message -->
                 {#if validationMessage}
                 <div id="validation-message">{validationMessage}</div>
                 {/if}
@@ -117,6 +83,22 @@
 
 </div>
 <style>
+
+    h1 {
+        position: relative;
+        padding: 0;
+        margin: 0;
+        font-family: "Raleway", sans-serif;
+        font-weight: 300;
+        font-size: 40px;
+        color: #080808;
+        -webkit-transition: all 0.4s ease 0s;
+        -o-transition: all 0.4s ease 0s;
+        transition: all 0.4s ease 0s;
+        text-align: center;
+        padding-bottom: 0.7em; 
+         
+    }
     .body {
         font-family: Arial, sans-serif;
         padding: 20px;
@@ -124,21 +106,27 @@
 
     table {
         width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
+        border-collapse: collapse; 
+        border-spacing: 0;
+        table-layout: fixed;
     }
 
     thead th {
-        text-align: left;
+        text-align: center;
         border-bottom: 2px solid #ddd;
         padding: 10px;
     }
 
-    tbody td {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
+    thead tr {
+        display: grid;
+        grid-template-columns: 0.2fr 0.3fr 1fr auto auto;
     }
 
+    .action {
+        width: 15px;
+    }
+
+   
     input {
         width: 100%;
         padding: 5px;
@@ -159,17 +147,6 @@
 
     button:hover {
         opacity: 1;
-    }
-
-    button.delete-button {
-        border: none;
-        background: url(./remove.svg) no-repeat 50% 50%;
-        background-size: 1rem 1rem;
-        cursor: pointer;
-        height: 100%;
-        aspect-ratio: 1;
-        opacity: 0.5;
-        transition: opacity 0.2s;
     }
 
     button:disabled {

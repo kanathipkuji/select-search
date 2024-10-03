@@ -15,6 +15,7 @@
 		"@types/chrome": "^0.0.270",
 		"nodemon": "^3.1.4",
 		"svelte": "^4.2.7",
+		"svelte-dnd-action": "^0.9.51",
 		"sveltekit-adapter-chrome-extension": "^2.0.1",
 		"vite": "^5.0.3"
 	},
