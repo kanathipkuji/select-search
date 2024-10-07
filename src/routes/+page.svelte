@@ -36,7 +36,8 @@
             validationMessage = 'Both label and URL are required!';
             return;
         }
-
+        console.log('main')
+        console.log(items);
         items = [...items, { ...newItem, id: crypto.randomUUID() }];
         chrome.storage.sync.set({ items });
         console.log(items);
@@ -54,11 +55,14 @@
                 <th>Shortcut Key</th>
                 <th>Label</th>
                 <th>URL</th>
-                <th class='action'></th>
-                <th class='action'></th>
+                <th class='action'>
+                    <div class="dummy"></div>
+                    <div class="dummy"></div>
+                    <div class="dummy"></div>
+                </th>
             </tr>
         </thead>
-        <VerticalList items={items.filter((item) => !deleting.includes(item.id))} {commands}/>
+        <VerticalList bind:items {commands} {deleting}/>
     </table>
     <div id="validation-message"></div>
     <button on:click={openForm} id="add-button">Add Item</button>
@@ -111,22 +115,48 @@
         table-layout: fixed;
     }
 
-    thead th {
-        text-align: center;
-        border-bottom: 2px solid #ddd;
-        padding: 10px;
+    thead {
+        overflow: scroll;
+        width: 100%;
     }
 
-    thead tr {
+    tr {
+        min-height: 2.5rem;
         display: grid;
-        grid-template-columns: 0.2fr 0.3fr 1fr auto auto;
+        grid-template-columns: 0.2fr 0.3fr 1fr auto;
+		margin: 0.15em 0;
+	}
+
+    th {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-bottom: 0.2rem solid #ddd;
+        padding: 0.5rem 0.75rem;
     }
 
-    .action {
-        width: 15px;
+
+    th.action {
+        margin-left: auto;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        column-gap: 0.6rem;
     }
 
-   
+    .dummy {
+        border: none;
+        background-size: 1rem 1rem;
+        cursor: pointer;
+        height: 1rem;
+        aspect-ratio: 1;
+        opacity: 0.5;
+        transition: opacity 0.2s;
+        visibility: hidden;
+        /* background: url(./remove.svg) no-repeat 50% 50%; */
+    }
+
+
     input {
         width: 100%;
         padding: 5px;
