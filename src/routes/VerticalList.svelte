@@ -120,6 +120,10 @@
         align-items: center;
         padding: 0.2rem 0.75rem;
         border-bottom: 0.1rem solid #ddd;
+        min-width: 2rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     td.url {
         justify-content: left;
