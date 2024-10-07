@@ -87,9 +87,9 @@ async function search(id, text, tab, byIndex) {
   chrome.tabs.create({ url: url.href, index: tab.index + 1 });
 }
 
-async function getCurrentTab() {
-  let queryOptions = { active: true, lastFocusedWindow: true };
-  // `tab` will either be a `tabs.Tab` instance or `undefined`.
-  let [tab] = await chrome.tabs.query(queryOptions);
-  return tab;
-}
+// async function getCurrentTab() {
+//   let queryOptions = { active: true, lastFocusedWindow: true };
+//   // `tab` will either be a `tabs.Tab` instance or `undefined`.
+//   let [tab] = await chrome.tabs.query(queryOptions);
+//   return tab;
+// }
