@@ -1,0 +1,23 @@
+{
+	"name": "query-shortcut-extension",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"devext": "nodemon --watch src --watch static --exec \"vite build\" -e json,ts,css,html,svelte"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^3.0.0",
+		"@sveltejs/kit": "^2.0.0",
+		"@sveltejs/vite-plugin-svelte": "^3.0.0",
+		"@types/chrome": "^0.0.270",
+		"nodemon": "^3.1.4",
+		"svelte": "^4.2.7",
+		"svelte-dnd-action": "^0.9.51",
+		"sveltekit-adapter-chrome-extension": "^2.0.1",
+		"vite": "^5.0.3"
+	},
+	"type": "module"
+}

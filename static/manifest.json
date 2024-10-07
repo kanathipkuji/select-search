@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Query Shortcut",
   "description": "Easily query selected text on any URLs.",
-  "version": "1.0",
+  "version": "2.0",
   "permissions": [
     "contextMenus",
     "activeTab",
@@ -30,9 +30,8 @@
       "description": "Query the selected text on URL #5"
     }
   },
-  "options_page": "options.html",
   "options_ui": {
-    "page": "options.html",
+    "page": "index.html",
     "open_in_tab": true
   }
 }
