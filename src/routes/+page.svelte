@@ -5,7 +5,7 @@
     let items = [];
     let commands = [];
     let showForm = false;
-    let newItem = { label: '', url: '' }; // Model for the new item
+    let newItem = { label: '', url: '' };
     let validationMessage = '';
     let deleting = []
 
@@ -27,8 +27,8 @@
 
     function closeForm() {
         showForm = false;
-        newItem = { label: '', url: '' }; // Reset new item model
-        validationMessage = ''; // Clear validation message
+        newItem = { label: '', url: '' };
+        validationMessage = '';
     }
 
     function saveItem() {
@@ -158,15 +158,6 @@
         visibility: hidden;
     }
 
-    /* button {
-        margin: 5px;
-        padding: 10px 20px;
-        background-color: #439db7;
-        color: white;
-        border: none;
-        cursor: pointer;
-    } */
-
     .popup-form {
         position: fixed;
         top: 30%;
@@ -228,11 +219,9 @@
     .button-18:hover,
     .button-18:focus {
         filter: brightness(95%);
-        /* color: #ffffff; */
     }
 
     .button-18:active {
-        /* filter: brightness(40%); */
         color: rgb(255, 255, 255, .7); 
     }
    
@@ -247,13 +236,5 @@
         font-weight: bold;
         color: red;
         margin-bottom: 10px;
-    }
-
-    #validation-message.invalid {
-        color: red;
-    }
-
-    #validation-message.valid {
-        color: #4CAF50;
     }
 </style>
