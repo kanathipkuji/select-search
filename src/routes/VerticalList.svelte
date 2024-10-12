@@ -18,6 +18,7 @@
 	}
 	function handleDndFinalize(e) {
 		items = e.detail.items;
+        chrome.storage.sync.set({ items });
 	}
 
     function transformDraggedElement(element, data, index) {
